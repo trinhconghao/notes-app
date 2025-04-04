@@ -12,8 +12,10 @@ export async function GET() {
     const notes = await getNotesByUser(user.id);
     return NextResponse.json(notes);
   } catch (error) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    const err = error as Error;
+    return NextResponse.json({ error: err.message }, { status: 500 });
   }
+  
 }
 
 export async function POST(req: Request) {
@@ -39,10 +41,11 @@ export async function POST(req: Request) {
     console.log("Note created successfully:", note);
     return NextResponse.json(note, { status: 201 });
   } catch (err) {
-    // Xử lý lỗi và trả về thông báo lỗi
-    console.log("Error creating note:", err);
-    return NextResponse.json({ error: err.message }, { status: 500 });
+    const error = err as Error;
+    console.log("Error creating note:", error.message);
+    return NextResponse.json({ error: error.message }, { status: 500 });
   }
+  
 }
 
 // export async function PUT(req: Request, { params }) {

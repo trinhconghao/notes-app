@@ -29,7 +29,8 @@ export async function PUT(req: Request, context: { params: { noteId: string } })
     const updatedNote = await updateNote(noteId, user.id, newText);
     return NextResponse.json(updatedNote);
   } catch (error) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    const err = error as Error;
+    return NextResponse.json({ error: err.message }, { status: 500 });
   }
 }
 
@@ -60,8 +61,9 @@ export async function DELETE(req: Request, { params }: { params: { noteId: strin
       }
       return NextResponse.json(deletedNote);
     } catch (error) {
-      console.error("Error in DELETE API:", error.message); // Log lỗi
-      return NextResponse.json({ error: error.message }, { status: 500 });
+      const err = error as Error;
+      console.error("Error in DELETE API:", err.message);
+      return NextResponse.json({ error: err.message }, { status: 500 });
     }
   }
   
