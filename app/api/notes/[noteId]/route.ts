@@ -5,9 +5,9 @@ import { deleteNote, updateNote } from "@/utils/noteService";
 
 export async function PUT(req: Request, context: { params: { noteId: string } }) {
   // Dùng await cho params để tránh lỗi
-  const { noteId } = await context.params;
+  const { noteId } = context.params;
   
-  const supabase = await createClient();
+  const supabase = createClient();
 
   // Lấy token từ header Authorization
   const token = req.headers.get("Authorization")?.replace("Bearer ", "");
@@ -35,8 +35,8 @@ export async function PUT(req: Request, context: { params: { noteId: string } })
 
 export async function DELETE(req: Request, { params }: { params: { noteId: string } }) {
     // Await params
-    const { noteId } = await params;  // Lấy noteId từ URL
-    const supabase = await createClient();
+    const { noteId } = params;  // Lấy noteId từ URL
+    const supabase = createClient();
   
     // Lấy token từ header Authorization
     const token = req.headers.get('Authorization')?.replace('Bearer ', '');
