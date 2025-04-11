@@ -3,16 +3,22 @@ import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/utils/supabase/client";
 import { deleteNote, updateNote } from "@/utils/noteService";
 
+type RouteContext = {
+  params: {
+    noteId: string;
+  };
+};
+
 export async function PUT(
-  req: NextRequest,
-  { params }: { params: { noteId: string } }
+  request: NextRequest,
+  context: RouteContext
 ) {
-  const { noteId } = params;
+  const { noteId } = context.params;
   
   const supabase = createClient();
 
   // Lấy token từ header Authorization
-  const token = req.headers.get("Authorization")?.replace("Bearer", "");
+  const token = request.headers.get("Authorization")?.replace("Bearer", "");
 
   if (!token) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -25,7 +31,7 @@ export async function PUT(
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const { newText } = await req.json();
+  const { newText } = await request.json();
 
   try {
     const updatedNote = await updateNote(noteId, user.id, newText);
@@ -37,14 +43,14 @@ export async function PUT(
 }
 
 export async function DELETE(
-  req: NextRequest,
-  { params }: { params: { noteId: string } }
+  request: NextRequest,
+  context: RouteContext
 ) {
-  const { noteId } = params;
+  const { noteId } = context.params;
   const supabase = createClient();
 
   // Lấy token từ header Authorization
-  const token = req.headers.get('Authorization')?.replace('Bearer', '');
+  const token = request.headers.get('Authorization')?.replace('Bearer', '');
   
   if (!token) {
     return NextResponse.json({ error: "Unauthorized: No token provided" }, { status: 401 });
