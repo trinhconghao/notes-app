@@ -3,17 +3,11 @@ import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/utils/supabase/client";
 import { deleteNote, updateNote } from "@/utils/noteService";
 
-type RouteContext = {
-  params: {
-    noteId: string;
-  };
-};
-
 export async function PUT(
   request: NextRequest,
-  context: RouteContext
+  { params }: { params: { noteId: string } }
 ) {
-  const { noteId } = context.params;
+  const { noteId } = params;
   
   const supabase = createClient();
 
@@ -44,9 +38,9 @@ export async function PUT(
 
 export async function DELETE(
   request: NextRequest,
-  context: RouteContext
+  { params }: { params: { noteId: string } }
 ) {
-  const { noteId } = context.params;
+  const { noteId } = params;
   const supabase = createClient();
 
   // Lấy token từ header Authorization
