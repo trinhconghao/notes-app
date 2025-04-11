@@ -1,14 +1,26 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { createClient } from "@/utils/supabase/client";
+
+// Debounce function
+function debounce(func: Function, wait: number) {
+  let timeout: NodeJS.Timeout;
+  return function executedFunction(...args: any[]) {
+    const later = () => {
+      clearTimeout(timeout);
+      func(...args);
+    };
+    clearTimeout(timeout);
+    timeout = setTimeout(later, wait);
+  };
+}
 
 export default function NotesPage() {
   const supabase = createClient();
   const [notes, setNotes] = useState<any[]>([]);
   const [currentNote, setCurrentNote] = useState("");
   const [selectedNote, setSelectedNote] = useState<{ id: number; text: string } | null>(null);
-
   const [user, setUser] = useState<any>(null);
 
   // Lấy thông tin user
@@ -98,6 +110,14 @@ export default function NotesPage() {
     };
   }, [selectedNote]);
 
+  // Debounced function to update Supabase
+  const debouncedUpdateSupabase = useCallback(
+    debounce(async (noteId: number, text: string) => {
+      await supabase.from("Note").update({ text }).eq("id", noteId);
+    }, 1000),
+    []
+  );
+
   // Chọn ghi chú
   const handleSelectNote = (note: any) => {
     if (selectedNote?.id === note.id) {
@@ -117,9 +137,10 @@ export default function NotesPage() {
     setCurrentNote(text);
 
     if (selectedNote) {
-      await supabase.from("Note").update({ text }).eq("id", selectedNote.id);
+      debouncedUpdateSupabase(selectedNote.id, text);
     }
   };
+ 
 
   return (
     <div className="flex h-screen">

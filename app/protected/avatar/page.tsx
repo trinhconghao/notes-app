@@ -93,8 +93,6 @@ export default function AvatarPage() {
     setUploading(false);
   };
   
-  
-
   return (
     <div className="flex flex-col items-center gap-4">
       {avatarUrl ? (
